@@ -5,12 +5,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TransactionCSVReader {
-    public List<Transaction> readTransactions(String filePath) {
+public abstract class TransactionCSVReader {
+    
+    public static List<Transaction> readTransactions(String filePath) {
         List<Transaction> transactions = new ArrayList<>();
         try {
             URL url = new URL(filePath);
-
             try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"))) {
                 String line;
                 while ((line = br.readLine()) != null) {
