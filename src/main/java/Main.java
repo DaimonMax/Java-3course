@@ -15,5 +15,15 @@ public class Main {
         
         List<Transaction> topExpenses = TransactionAnalyzer.findTopExpenses(transactions);
         TransactionReportGenerator.printTopExpensesReport(topExpenses);
+
+        String startDate = "01-01-2024";
+        String endDate = "31-01-2024";
+        Transaction largest = TransactionAnalyzer.findLargestExpenseInPeriod(transactions, startDate, endDate);
+        Transaction smallest = TransactionAnalyzer.findSmallestExpenseInPeriod(transactions, startDate, endDate);
+        TransactionReportGenerator.printPeriodExpensesExtremes(startDate, endDate, largest, smallest);
+
+        var expensesByCategory = TransactionAnalyzer.getExpensesByCategory(transactions);
+        var expensesByMonth = TransactionAnalyzer.getExpensesByMonth(transactions);
+        TransactionReportGenerator.printExpensesVisualizationReport(expensesByCategory, expensesByMonth, 1000.0);
     }
 }

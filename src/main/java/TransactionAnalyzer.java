@@ -35,4 +35,50 @@ public abstract class TransactionAnalyzer {
                 .limit(10)
                 .collect(Collectors.toList());
     }
+
+    public static Transaction findLargestExpenseInPeriod(List<Transaction> transactions, String startDateStr, String endDateStr) {
+        LocalDate start = LocalDate.parse(startDateStr, dateFormatter);
+        LocalDate end = LocalDate.parse(endDateStr, dateFormatter);
+
+        return transactions.stream()
+                .filter(t -> t.getAmount() < 0)
+                .filter(t -> {
+                    LocalDate d = LocalDate.parse(t.getDate(), dateFormatter);
+                    return !d.isBefore(start) && !d.isAfter(end);
+                })
+                .min(Comparator.comparingDouble(Transaction::getAmount))
+                .orElse(null);
+    }
+
+    public static Transaction findSmallestExpenseInPeriod(List<Transaction> transactions, String startDateStr, String endDateStr) {
+        LocalDate start = LocalDate.parse(startDateStr, dateFormatter);
+        LocalDate end = LocalDate.parse(endDateStr, dateFormatter);
+
+        return transactions.stream()
+                .filter(t -> t.getAmount() < 0)
+                .filter(t -> {
+                    LocalDate d = LocalDate.parse(t.getDate(), dateFormatter);
+                    return !d.isBefore(start) && !d.isAfter(end);
+                })
+                .max(Comparator.comparingDouble(Transaction::getAmount))
+                .orElse(null);
+    }
+
+    public static java.util.Map<String, Double> getExpensesByCategory(List<Transaction> transactions) {
+        return transactions.stream()
+                .filter(t -> t.getAmount() < 0)
+                .collect(Collectors.groupingBy(
+                        Transaction::getDescription,
+                        Collectors.summingDouble(t -> Math.abs(t.getAmount()))
+                ));
+    }
+
+    public static java.util.Map<String, Double> getExpensesByMonth(List<Transaction> transactions) {
+        return transactions.stream()
+                .filter(t -> t.getAmount() < 0)
+                .collect(Collectors.groupingBy(
+                        t -> LocalDate.parse(t.getDate(), dateFormatter).format(DateTimeFormatter.ofPattern("MM-yyyy")),
+                        Collectors.summingDouble(t -> Math.abs(t.getAmount()))
+                ));
+    }
 }
